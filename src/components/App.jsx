@@ -1,58 +1,57 @@
-import React, {Component} from "react";
-import Section from "./Section/Section";
-import Feedback from "./Feedback/Feedback";
-import Statistics from "./Statistics/Statistics";
-import Notification from "./Notification/Notification";
+import React, { Component } from 'react'
+import Phonebook from './Phonebook/Phonebook'
+import Contacts from "./Contacts/Contacts"
+import Filter from './Filter/Filter'
+import { nanoid } from 'nanoid'
 
-class App extends Component {
+export default class App extends Component {
   state = {
-    good: 0,
-    neutral: 0,
-    bad: 0
+    contacts: [
+      {id: 'id-1', name: 'Rosie Simpson', number: '459-12-56'},
+      {id: 'id-2', name: 'Hermione Kline', number: '443-89-12'},
+      {id: 'id-3', name: 'Eden Clements', number: '645-17-79'},
+      {id: 'id-4', name: 'Annie Copeland', number: '227-91-26'},
+    ],
+    filter: ''
+   }
+
+   filterOnChange  = e => {
+    const {value} = e.currentTarget
+    this.setState({ filter: value });
   };
-
- totalFeeds = () => {
-  const {good, neutral, bad} = this.state
-  return good + neutral + bad
-
- } 
-
- positivePercentage = () => {
-  const {good} = this.state
-  const total = this.totalFeeds()
-  return Math.trunc(good / total * 100) 
-
- }
-
-addFeed = (props) => {
-    const {name} = props.currentTarget        
+  
+  formSubmit = data => {
+    let arrName = this.state.contacts.map(el=>el.name.toLowerCase())
+  
+    let newContact = {id: nanoid(), ...data}
+    arrName.includes(data.name.toLowerCase()) ? alert(`${data.name} is already in your contacts`) : 
+    this.setState(({ contacts }) => ({
+      contacts: [newContact, ...contacts],
+    }))
+    
+  }
+  
+  deleteContact = contactId => {
     this.setState(prevState => ({
-      [name]:prevState[name] + 1
+      contacts: prevState.contacts.filter(contact => contact.id !== contactId),
     }));
-
   };
 
-  render() 
-    {
-      const {good, neutral, bad} = this.state
-      const total = this.totalFeeds()
-      const positivePercentage = this.positivePercentage()
-     
+  render() {   
+    const toLowFilter = this.state.filter.toLowerCase()
+    const visibleContacts = this.state.contacts.filter(cont => cont.name.toLowerCase().includes(toLowFilter))
     return (
-<>
-<Section title="Please leave feedback">
-  <Feedback options={Object.keys(this.state)} addFeed={this.addFeed} />  
-</Section>
-<Section title="Statistics">
-  {total ?
-  <Statistics good={good} neutral={neutral} bad={bad} total={total} positivePercentage={positivePercentage ? positivePercentage : 0} /> 
-  : <Notification message="There is no feedback"></Notification>}     
-</Section>
-</>
-
-
+     <div className='container'>
+      <h2>Phonebook</h2>
+      <Phonebook className="Phonebook" onSubmit={this.formSubmit}  />     
+      <h2>Contacts</h2>   
+      {this.state.contacts.length ?
+       <div className='contacts-wrapper'>
+       <Filter filter={this.state.filter} changeFilter={this.filterOnChange}/> 
+       <Contacts filter={this.state.filter} deleteContact={this.deleteContact} filterOnChange={this.filterOnChange} contactsList={visibleContacts}/> 
+       </div>
+       : <h2>There no contacts in Your phonebook yet!</h2>}     
+     </div>
     )
   }
 }
-
-export default App;

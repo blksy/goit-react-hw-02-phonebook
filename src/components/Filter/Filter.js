@@ -1,3 +1,5 @@
+import "./Filter.css";
+
 const Filter = ({filter, changeFilter}) => (
     <label className="filter-label">
         Find contact by name 

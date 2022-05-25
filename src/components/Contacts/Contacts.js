@@ -1,3 +1,5 @@
+import "./Contacts.css";
+
 export default function Contacts ({contactsList, deleteContact}) {
 
     return (

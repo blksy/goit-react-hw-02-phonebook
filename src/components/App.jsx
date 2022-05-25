@@ -3,6 +3,7 @@ import Phonebook from './Phonebook/Phonebook'
 import Contacts from "./Contacts/Contacts"
 import Filter from './Filter/Filter'
 import { nanoid } from 'nanoid'
+import './App.css'
 
 export default class App extends Component {
   state = {
